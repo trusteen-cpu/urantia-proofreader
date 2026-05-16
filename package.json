@@ -1,0 +1,14 @@
+{
+  "name": "urantia-proofreader",
+  "version": "1.0.0",
+  "description": "유란시아서 번역 교정 앱",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@anthropic-ai/sdk": "^0.20.0",
+    "cors": "^2.8.5"
+  }
+}

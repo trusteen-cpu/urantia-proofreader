@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유란시아서 번역 교정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ══ HEADER ══ */
+#header {
+  background: #ffffff;
+  border-bottom: 2px solid #d0d7e3;
+  padding: 9px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+#header h1 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c3e7a;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.vbar { width: 1px; height: 24px; background: #d0d7e3; flex-shrink: 0; }
+
+/* Jump selects inline */
+.jump-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.jump-block label {
+  font-size: 11px;
+  color: #6b7a99;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.jsel {
+  background: #fff;
+  border: 1.5px solid #b8c4dc;
+  color: #1a1a2e;
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.jsel:focus { outline: none; border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.1); }
+#sel-paper { max-width: 190px; }
+#sel-section, #sel-verse { width: 58px; text-align: center; }
+
+.btn-jump {
+  background: #2c3e7a;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.btn-jump:hover { background: #1d2d5f; }
+
+/* Nav */
+.nav-block { display: flex; align-items: center; gap: 5px; }
+.btn-nav {
+  background: #f0f2f8;
+  border: 1.5px solid #c8d0e4;
+  color: #3b4a6b;
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 4px 10px;
+  cursor: pointer;
+  line-height: 1.5;
+  transition: background 0.1s;
+}
+.btn-nav:hover { background: #dde2f0; }
+.btn-nav:disabled { opacity: 0.28; cursor: not-allowed; }
+#current-key-display {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2c3e7a;
+  background: #eef1fb;
+  border: 1.5px solid #c0ccee;
+  padding: 3px 10px;
+  border-radius: 5px;
+  min-width: 74px;
+  text-align: center;
+  white-space: nowrap;
+}
+#progress-info { font-size: 11px; color: #9aa3bc; white-space: nowrap; }
+
+/* Proofread button */
+.btn-proofread {
+  background: #3b5bdb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.12s, box-shadow 0.12s;
+}
+.btn-proofread:hover { background: #2f4ac4; box-shadow: 0 2px 10px rgba(59,91,219,0.28); }
+
+#status-msg { font-size: 12px; color: #6b7a99; }
+
+/* ══ 1단: KO | ENG ══ */
+#row1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+  border-bottom: 2px solid #c0ccee;
+  min-height: 180px;
+  max-height: 36vh;
+}
+.panel-header {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 8px 18px 6px;
+  border-bottom: 1px solid #e4e9f4;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #6b7a99;
+  background: #f8f9fc;
+}
+.badge {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+}
+.badge-ko { background: #2e7d4f; }
+.badge-en { background: #2c5aa0; }
+.badge-2  { background: #9b6f10; }
+.badge-3  { background: #2a7d4f; }
+.badge-4  { background: #6a2fa0; }
+
+.panel-scroll { overflow-y: auto; padding: 13px 18px; }
+.panel-ko-scroll { border-right: 1px solid #dde3f0; }
+
+#ko-text {
+  font-size: 15px;
+  color: #1c2d50;
+  line-height: 1.95;
+  word-break: keep-all;
+}
+#eng-text {
+  font-size: 14px;
+  color: #1e3510;
+  line-height: 1.95;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.section-key {
+  font-size: 11px;
+  font-weight: 700;
+  color: #3b5bdb;
+  background: #eef1fb;
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-right: 6px;
+}
+
+/* ══ 2단·3단·4단 ROW WRAPPER ══ */
+.result-row {
+  background: #fff;
+  border-bottom: 1.5px solid #dde3f0;
+  min-height: 110px;
+  max-height: 30vh;
+  display: flex;
+  flex-direction: column;
+}
+#row2 { border-left: 4px solid #c9980a; }
+#row3 { border-left: 4px solid #2e7d4f; }
+#row4 { border-left: 4px solid #6a2fa0; }
+
+.row-header {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  padding: 7px 18px 5px;
+  border-bottom: 1px solid #eaecf4;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #f8f9fc;
+  flex-shrink: 0;
+}
+#row2 .row-header { color: #7a5800; }
+#row3 .row-header { color: #1a5e35; }
+#row4 .row-header { color: #52178a; }
+
+.row-scroll {
+  overflow-y: auto;
+  padding: 11px 18px 14px;
+  flex: 1;
+}
+
+/* Correction items */
+.corr-wrap { display: flex; flex-direction: column; gap: 12px; }
+.corr-item {
+  padding-bottom: 11px;
+  border-bottom: 1px dashed #dee2ec;
+}
+.corr-item:last-child { border-bottom: none; padding-bottom: 0; }
+.corr-num {
+  display: inline-block;
+  background: #3b5bdb;
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+/* row2: eng highlight */
+.corr-eng {
+  font-family: Georgia, serif;
+  font-size: 13px;
+  color: #3a2800;
+  line-height: 1.78;
+  background: #fff9e6;
+  border-left: 3px solid #d4a017;
+  padding: 7px 12px;
+  border-radius: 0 5px 5px 0;
+}
+
+/* row3: ko old + new */
+.corr-sublabel {
+  font-size: 10px;
+  color: #9aa3bc;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+.corr-ko-orig {
+  font-size: 13px;
+  color: #7a1a1a;
+  line-height: 1.78;
+  background: #fff0f0;
+  border-left: 3px solid #d85050;
+  padding: 7px 12px;
+  border-radius: 0 5px 5px 0;
+  margin-bottom: 6px;
+  text-decoration: line-through;
+  text-decoration-color: #d85050aa;
+}
+.corr-ko-new {
+  font-size: 13px;
+  color: #0f4a25;
+  line-height: 1.78;
+  background: #edfaf3;
+  border-left: 3px solid #2e9a5a;
+  padding: 7px 12px;
+  border-radius: 0 5px 5px 0;
+  font-weight: 600;
+}
+
+/* row4: reason */
+.corr-reason {
+  font-size: 13px;
+  color: #2a0d50;
+  line-height: 1.8;
+  background: #f8f0ff;
+  border-left: 3px solid #8a40c0;
+  padding: 7px 12px;
+  border-radius: 0 5px 5px 0;
+}
+
+/* No correction */
+.no-correction {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: #0f4a25;
+  background: #edfaf3;
+  border: 1.5px solid #90d8a8;
+  border-radius: 7px;
+  padding: 10px 16px;
+}
+
+/* Placeholder */
+.ph {
+  color: #b0b8cc; font-size: 13px;
+  text-align: center; padding: 16px 0;
+}
+.ph-icon { font-size: 22px; display: block; margin-bottom: 5px; }
+
+/* Spinner */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid #d0d7e3; border-top-color: #3b5bdb;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle; margin-right: 5px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #c8d0e4; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #a0aacc; }
+</style>
+</head>
+<body>
+
+<!-- ════════ HEADER ════════ -->
+<div id="header">
+  <h1>📖 유란시아서 번역 교정</h1>
+  <div class="vbar"></div>
+
+  <!-- Inline jump -->
+  <div class="jump-block">
+    <label>편</label>
+    <select class="jsel" id="sel-paper" onchange="onPaperChange()"></select>
+    <label>장</label>
+    <select class="jsel" id="sel-section" onchange="onSectionChange()"></select>
+    <label>절</label>
+    <select class="jsel" id="sel-verse"></select>
+    <button class="btn-jump" onclick="jumpToSelected()">이동 ▶</button>
+  </div>
+
+  <div class="vbar"></div>
+
+  <!-- Prev / key / next -->
+  <div class="nav-block">
+    <button class="btn-nav" id="btn-prev" onclick="navigate(-1)" disabled title="이전 절 (←)">◀</button>
+    <span id="current-key-display">—</span>
+    <button class="btn-nav" id="btn-next" onclick="navigate(1)" disabled title="다음 절 (→)">▶</button>
+    <span id="progress-info"></span>
+  </div>
+
+  <div class="vbar"></div>
+  <button class="btn-proofread" onclick="runProofread()">🤖 AI 교정 실행</button>
+  <span id="status-msg"></span>
+</div>
+
+<!-- ════════ 1단: KO | ENG ════════ -->
+<div id="row1">
+  <!-- 한글 -->
+  <div style="display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #dde3f0;">
+    <div class="panel-header">
+      <span class="badge badge-ko">1단</span>한글 번역본
+    </div>
+    <div class="panel-scroll panel-ko-scroll" style="flex:1">
+      <div id="ko-text"><p class="ph"><span class="ph-icon">📄</span>편·장·절을 선택하고 [이동]을 누르세요</p></div>
+    </div>
+  </div>
+  <!-- 영어 -->
+  <div style="display:flex;flex-direction:column;overflow:hidden;background:#fafbfe;">
+    <div class="panel-header">
+      <span class="badge badge-en">1단</span>영어 원문
+    </div>
+    <div class="panel-scroll" style="flex:1">
+      <div id="eng-text"><p class="ph"><span class="ph-icon">📖</span>Select paper · section · verse, then press 이동</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ 2단: 교정 대상 원문 영어 ════════ -->
+<div class="result-row" id="row2">
+  <div class="row-header">
+    <span class="badge badge-2">2단</span>교정 대상 원문 (영어)
+  </div>
+  <div class="row-scroll">
+    <div id="eng-suggest-content">
+      <p class="ph"><span class="ph-icon">🔎</span>AI 교정 실행 후 표시됩니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ 3단: 한글 교정 제안 ════════ -->
+<div class="result-row" id="row3">
+  <div class="row-header">
+    <span class="badge badge-3">3단</span>한글 교정 제안
+  </div>
+  <div class="row-scroll">
+    <div id="ko-suggest-content">
+      <p class="ph"><span class="ph-icon">✏️</span>AI 교정 실행 후 표시됩니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ 4단: 교정 제안 이유 ════════ -->
+<div class="result-row" id="row4">
+  <div class="row-header">
+    <span class="badge badge-4">4단</span>교정 제안 이유
+  </div>
+  <div class="row-scroll">
+    <div id="reason-content">
+      <p class="ph"><span class="ph-icon">💡</span>AI 교정 실행 후 표시됩니다</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let papersData = {};
+let currentKey = null;
+let currentNav = { prev: null, next: null, index: 0, total: 0 };
+let isLoading  = false;
+
+// ── Init ──
+async function init() {
+  setStatus('데이터 로딩 중...');
+  try {
+    const r = await fetch('/api/papers');
+    papersData = await r.json();
+    buildPaperSelect();
+    setStatus('편·장·절을 선택하고 [이동 ▶]을 누르세요');
+  } catch (e) {
+    setStatus('❌ 서버 연결 실패: ' + e.message);
+  }
+}
+
+// ── Selects ──
+function buildPaperSelect() {
+  const sel = document.getElementById('sel-paper');
+  sel.innerHTML = '';
+  Object.keys(papersData).map(Number).sort((a,b)=>a-b).forEach(p => {
+    const pd  = papersData[String(p)];
+    const opt = document.createElement('option');
+    opt.value = p;
+    if (p === 0) {
+      opt.textContent = '0 – 머리말 (Foreword)';
+    } else {
+      const ko = (pd.title_ko || '').replace(/^제\s*\d+\s*편\s*/, '');
+      opt.textContent = `${p} – ${ko}`;
+    }
+    sel.appendChild(opt);
+  });
+  onPaperChange();
+}
+
+function onPaperChange() {
+  const paper = document.getElementById('sel-paper').value;
+  const pd    = papersData[String(paper)];
+  const sel   = document.getElementById('sel-section');
+  sel.innerHTML = '';
+  if (!pd) return;
+  pd.sections.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    sel.appendChild(o);
+  });
+  onSectionChange();
+}
+
+function onSectionChange() {
+  const paper   = document.getElementById('sel-paper').value;
+  const section = document.getElementById('sel-section').value;
+  const sel     = document.getElementById('sel-verse');
+  sel.innerHTML = '<option>1</option>';
+  fetch(`/api/paper/${paper}/section/${section}`)
+    .then(r => r.json())
+    .then(verses => {
+      sel.innerHTML = '';
+      verses.forEach(v => {
+        const vNum = parseInt(v.key.split('.')[1]);
+        const o = document.createElement('option');
+        o.value = vNum; o.textContent = vNum;
+        sel.appendChild(o);
+      });
+    }).catch(() => {});
+}
+
+// ── Jump & load ──
+async function jumpToSelected() {
+  const p = document.getElementById('sel-paper').value;
+  const s = document.getElementById('sel-section').value;
+  const v = document.getElementById('sel-verse').value;
+  await loadSection(`${p}:${s}.${v}`);
+}
+
+async function loadSection(key) {
+  if (isLoading) return;
+  isLoading = true;
+  setStatus('<span class="spinner"></span>로딩 중...');
+  try {
+    const [sR, nR] = await Promise.all([
+      fetch(`/api/section/${encodeURIComponent(key)}`),
+      fetch(`/api/navigate/${encodeURIComponent(key)}`)
+    ]);
+    const sec = await sR.json();
+    const nav = await nR.json();
+    currentKey = key;
+    currentNav = nav;
+    renderSection(sec);
+    document.getElementById('btn-prev').disabled = !nav.prev;
+    document.getElementById('btn-next').disabled = !nav.next;
+    document.getElementById('current-key-display').textContent = key;
+    document.getElementById('progress-info').textContent = `${nav.index+1} / ${nav.total}`;
+    syncSelects(key);
+    clearResults();
+    setStatus('교정이 필요하면 [🤖 AI 교정 실행]을 누르세요');
+  } catch (e) {
+    setStatus('❌ 로딩 실패: ' + e.message);
+  }
+  isLoading = false;
+}
+
+function renderSection(data) {
+  const ks = `<span class="section-key">${data.key}</span>`;
+  document.getElementById('ko-text').innerHTML  = data.ko
+    ? `<p>${ks}${esc(data.ko)}</p>`
+    : `<p class="ph">번역 없음</p>`;
+  document.getElementById('eng-text').innerHTML = data.eng
+    ? `<p>${ks}${esc(data.eng)}</p>`
+    : `<p class="ph">No text found</p>`;
+}
+
+function syncSelects(key) {
+  const [ps, verse]    = key.split('.');
+  const [paper, section] = ps.split(':');
+  const pSel = document.getElementById('sel-paper');
+  const sSel = document.getElementById('sel-section');
+  const vSel = document.getElementById('sel-verse');
+  if (pSel.value !== paper) {
+    pSel.value = paper;
+    onPaperChange();
+    setTimeout(() => { sSel.value = section; onSectionChange();
+      setTimeout(() => { vSel.value = verse; }, 220); }, 70);
+  } else if (sSel.value !== section) {
+    sSel.value = section; onSectionChange();
+    setTimeout(() => { vSel.value = verse; }, 220);
+  } else { vSel.value = verse; }
+}
+
+function navigate(dir) {
+  const key = dir < 0 ? currentNav.prev : currentNav.next;
+  if (key) loadSection(key);
+}
+
+document.addEventListener('keydown', e => {
+  if (['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+});
+
+// ── AI Proofread ──
+async function runProofread() {
+  if (!currentKey) { setStatus('❌ 먼저 구절을 선택하세요'); return; }
+  const engText = (document.getElementById('eng-text').textContent || '')
+    .replace(currentKey, '').trim();
+  const koText  = (document.getElementById('ko-text').textContent  || '')
+    .replace(currentKey, '').trim();
+  if (!engText) { setStatus('❌ 먼저 구절을 선택하세요'); return; }
+
+  setStatus('<span class="spinner"></span>AI 교정 중... (30초~1분)');
+  setLoading();
+
+  try {
+    const r = await fetch('/api/proofread', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: currentKey, eng: engText, ko: koText })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    parseResults(d.result);
+    setStatus(`✅ 교정 완료 — ${currentKey}`);
+  } catch (e) {
+    setStatus('❌ 교정 실패: ' + e.message);
+    clearResults();
+  }
+}
+
+function parseResults(text) {
+  const e2 = document.getElementById('eng-suggest-content');
+  const k2 = document.getElementById('ko-suggest-content');
+  const r2 = document.getElementById('reason-content');
+
+  if (!text || text.includes('교정 사항 없음')) {
+    const ok = `<div class="no-correction">✅ 교정 사항 없음 — 번역이 원문에 충실합니다</div>`;
+    e2.innerHTML = k2.innerHTML = r2.innerHTML = ok;
+    return;
+  }
+
+  const lines = text.split('\n');
+  const blocks = [];
+  let cur  = { eng:[], koO:[], koN:[], rsn:[] };
+  let mode = null;
+
+  for (const line of lines) {
+    const t = line.trim();
+    if (!t) continue;
+    if (/^교정 대상( 원문)?:/.test(t)) {
+      if (cur.eng.length || cur.koN.length) { blocks.push({...cur}); cur = {eng:[],koO:[],koN:[],rsn:[]}; }
+      mode = 'eng'; const v = t.replace(/^교정 대상( 원문)?:\s*/,''); if(v) cur.eng.push(v);
+    } else if (/^기존 번역:/.test(t)) {
+      mode = 'koO'; const v = t.replace(/^기존 번역:\s*/,''); if(v) cur.koO.push(v);
+    } else if (/^수정 제안:/.test(t)) {
+      mode = 'koN'; const v = t.replace(/^수정 제안:\s*/,''); if(v) cur.koN.push(v);
+    } else if (/^(수정|교정) 이유:/.test(t)) {
+      mode = 'rsn'; const v = t.replace(/^(수정|교정) 이유:\s*/,''); if(v) cur.rsn.push(v);
+    } else if (mode) { cur[mode].push(t); }
+  }
+  if (cur.eng.length || cur.koN.length) blocks.push(cur);
+
+  if (!blocks.length) {
+    e2.innerHTML = `<div class="corr-eng">${esc(text)}</div>`;
+    k2.innerHTML = r2.innerHTML = `<p class="ph">AI 응답 파싱 불가 — 2단 원문 참조</p>`;
+    return;
+  }
+
+  let eH='', kH='', rH='';
+  blocks.forEach((b, i) => {
+    const n = blocks.length > 1 ? `<div class="corr-num">교정 ${i+1}</div>` : '';
+    eH += `<div class="corr-item">${n}<div class="corr-eng">${esc(b.eng.join(' '))}</div></div>`;
+    kH += `<div class="corr-item">${n}
+      <div class="corr-sublabel">기존 번역</div>
+      <div class="corr-ko-orig">${esc(b.koO.join(' '))}</div>
+      <div class="corr-sublabel" style="margin-top:7px">수정 제안</div>
+      <div class="corr-ko-new">${esc(b.koN.join(' '))}</div>
+    </div>`;
+    rH += `<div class="corr-item">${n}<div class="corr-reason">${esc(b.rsn.join(' '))}</div></div>`;
+  });
+
+  e2.innerHTML = eH || '<p class="ph">없음</p>';
+  k2.innerHTML = kH || '<p class="ph">없음</p>';
+  r2.innerHTML = rH || '<p class="ph">없음</p>';
+}
+
+function setLoading() {
+  const ld = `<p class="ph"><span class="spinner"></span>분석 중...</p>`;
+  document.getElementById('eng-suggest-content').innerHTML = ld;
+  document.getElementById('ko-suggest-content').innerHTML  = ld;
+  document.getElementById('reason-content').innerHTML      = ld;
+}
+function clearResults() {
+  document.getElementById('eng-suggest-content').innerHTML = `<p class="ph"><span class="ph-icon">🔎</span>AI 교정 실행 후 표시됩니다</p>`;
+  document.getElementById('ko-suggest-content').innerHTML  = `<p class="ph"><span class="ph-icon">✏️</span>AI 교정 실행 후 표시됩니다</p>`;
+  document.getElementById('reason-content').innerHTML      = `<p class="ph"><span class="ph-icon">💡</span>AI 교정 실행 후 표시됩니다</p>`;
+}
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function setStatus(msg) {
+  document.getElementById('status-msg').innerHTML = msg;
+}
+
+// Keep-alive (server sleep 방지)
+setInterval(() => fetch('/ping').catch(()=>{}), 10 * 60 * 1000);
+
+init();
+</script>
+</body>
+</html>
